@@ -64,29 +64,74 @@ tok identifyToken(string Op, tok T_p){
   return T;
 }
 
-// class calcStack{
-//   private:
-//     char S[100];
-//     double output;
-//
-//   public:
-//     void push(char x);
-//     char pop();
-//
-// };
+float calcOperation(tok operand, tok T1, tok T2){
+  float output;
+  switch(operand.TkVal){
+    case 1: output = T1.TkVal + T2.TkVal;
+            break;
+    case 2: output = T1.TkVal - T2.TkVal;
+            break;
+    case 3: output = T1.TkVal * T2.TkVal;
+            break;
+    case 4: output = T2.TkVal / T1.TkVal;
+            break;
+    case 5: output = T2.TkVal % T1.TkVal;
+            break;
+  }
+  return output;
+}
 
-int main()
-{
+class calcStack{
+  private:
+    tok * S;
+    int top;
+    double output;
+
+  public:
+    calcStack(int n = 1){
+      S = new tok[n];
+      top = -1;
+    }
+    void push(tok x){
+      S[top + 1] = x;
+      top++;
+    }
+    tok pop(){
+      if(top == -1){
+        cout << "Stack is empty!";
+        exit (1);
+      }
+      top--;
+      return S[top + 1];
+    }
+};
+
+int main() {
+   // Number of inputs into calculator
    int n;
+   cin >> n;
+
+   //stack for operators and operands
+   calcStack Operands(n), Operators(n);
+
    tok T, T_p;
    T_p.TkType = -1;
-   cin >> n;
    string Op;
+   float result = 0;
+
    for (int i= 0; i< n; i++){
      cin >> Op;
      T = identifyToken(Op, T_p);
      T_p = T;
-     cout << T.TkType<<" "<<T.TkVal<<endl;
+
+    if (T.TkType == 0)
+      Operands.push(T);
+    else
+      Operators.push(T);
    }
+   tok T1 = Operators.pop();
+   tok T2 = Operators.pop();
+   result = calcOperation(Operands.pop(), T1, T2);
+   cout<<result;
    return 0;
 }
