@@ -1,8 +1,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
-#include <ctype.h>
-#include <cstdint>
 
 using namespace std;
 
@@ -10,6 +8,9 @@ struct Tokenizer{
   int TkType;
   float TkVal;
 };
+
+//Priority array containg the priorities of operators numbered 1-8
+int PRIORITY[] = {1, 1, 2, 3, 3, 0, 4, 5};
 
 typedef Tokenizer tok;
 
@@ -34,7 +35,7 @@ tok identifyToken(string Op, tok T_p){
                     T.TkType = 0;
                     T.TkVal = 4;
                  }
-                 else if (Op == "%"){
+                 else if (Op == "\%"){
                         T.TkType = 0;
                         T.TkVal = 5;
                       }
@@ -55,7 +56,7 @@ tok identifyToken(string Op, tok T_p){
   return T;
 }
 
-float calcOperatsion(tok operat, tok T1, tok T2){
+float calcOperatorsion(tok operat, tok T1, tok T2){
   float output;
   switch((int) operat.TkVal){
     case 1: output = T2.TkVal + T1.TkVal;
@@ -106,10 +107,10 @@ class calcStack{
 
     // Display all contents of Stack
     void displayStack(){
-        cout<<"---------"<<endl;
+        cout<<"---------" << endl;
         int i = TOP;
         if (i == -1){
-          cout<<"Empty"<<endl;
+          cout<<"Empty" << endl;
           return;
         }
         tok T;
@@ -120,8 +121,8 @@ class calcStack{
         }
     }
 
-     // Used only for operat stack
-     int valOperatsorTop(){
+     // Used only for operators stack
+     int valOperatorsorTop(){
        if (TOP == -1)
           return -1;
        tok T = S[TOP];
@@ -129,8 +130,6 @@ class calcStack{
      }
 };
 
-//Priority array containg the priorities of operats numbered 1-8
-int PRIORITY[] = {1, 1, 2, 3, 3, 0, 0, 5};
 
 int checkPriority(float OpCode1, float OpCode2){
   int Op1 = (int) OpCode1 - 1;
@@ -153,6 +152,9 @@ bool isInvalidExpression(tok T1, tok T2){
   else if (T1.TkType == 0 && T2.TkType == 0 && T2.TkVal != 8 && T2.TkVal != 6){
       return 1;
   }
+  else if (T1.TkType == 0 && T2.TkType == 0 && T1.TkVal == 8){
+      return 1;
+  }
   else if (T1.TkType == 1 && T2.TkType == 0 && T2.TkVal == 6){
       return 1;
   }
@@ -164,8 +166,8 @@ int main() {
    int n;
    cin >> n;
 
-   //stack for Operands and Operats
-   calcStack Operats(n), Operands(n);
+   //stack for Operands and Operators
+   calcStack Operators(n), Operands(n);
 
    tok T, T_p, RES;
 
@@ -189,40 +191,44 @@ int main() {
 
       if (T.TkType == 0){
         if (T.TkVal == 6)
-                Operats.push(T);
+                Operators.push(T);
         else if (T.TkVal == 7){
-                while(Operats.valOperatsorTop() != 6){
+                while(Operators.valOperatorsorTop() != 6){
                   tok T1 = Operands.pop();
                   tok T2 = Operands.pop();
-                  tok Opd = Operats.pop();
-                  RES.TkVal = calcOperatsion(Opd, T1, T2);
+                  tok Opd = Operators.pop();
+                  RES.TkVal = calcOperatorsion(Opd, T1, T2);
                   Operands.push(RES);
                 }
-                tok Opd = Operats.pop();
+                tok Opd = Operators.pop();
             }
-            else if (checkPriority(Operats.valOperatsorTop(), T.TkVal) == -1){
+            else if (checkPriority(Operators.valOperatorsorTop(), T.TkVal) == -1){
                     tok T1 = Operands.pop();
                     tok T2 = Operands.pop();
-                    tok Opd = Operats.pop();
-                    RES.TkVal = calcOperatsion(Opd, T1, T2);
+                    tok Opd = Operators.pop();
+                    RES.TkVal = calcOperatorsion(Opd, T1, T2);
                     Operands.push(RES);
-                    Operats.push(T);
+                    Operators.push(T);
                   }
                   else if (T.TkVal != 8)
-                      Operats.push(T);
+                      Operators.push(T);
       }
       else
         Operands.push(T);
 
       // Operands.displayStack();
-      // Operats.displayStack();
+      // Operators.displayStack();
    }
 
-   while(! Operats.isEmpty()){
+   while(! Operators.isEmpty()){
      tok T1 = Operands.pop();
      tok T2 = Operands.pop();
-     tok Opd = Operats.pop();
-     RES.TkVal = calcOperatsion(Opd, T1, T2);
+     tok Opd = Operators.pop();
+     if (Opd.TkVal == 0 && Opd.TkVal == 6){
+       cout<<"Malformed expression";
+       return -1;
+     }
+     RES.TkVal = calcOperatorsion(Opd, T1, T2);
      Operands.push(RES);
    }
 
