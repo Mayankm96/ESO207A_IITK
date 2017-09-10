@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <string>
+#include <ctype.h>
 #include <cstdint>
 
 using namespace std;
@@ -54,9 +55,9 @@ tok identifyToken(string Op, tok T_p){
   return T;
 }
 
-float calcOperation(tok operator, tok T1, tok T2){
+float calcOperatsion(tok operat, tok T1, tok T2){
   float output;
-  switch((int) operator.TkVal){
+  switch((int) operat.TkVal){
     case 1: output = T2.TkVal + T1.TkVal;
             break;
     case 2: output = T2.TkVal - T1.TkVal;
@@ -119,8 +120,8 @@ class calcStack{
         }
     }
 
-     // Used only for operator stack
-     int valOperatorTop(){
+     // Used only for operat stack
+     int valOperatsorTop(){
        if (TOP == -1)
           return -1;
        tok T = S[TOP];
@@ -128,7 +129,7 @@ class calcStack{
      }
 };
 
-//Priority array containg the priorities of operators numbered 1-8
+//Priority array containg the priorities of operats numbered 1-8
 int PRIORITY[] = {1, 1, 2, 3, 3, 0, 0, 5};
 
 int checkPriority(float OpCode1, float OpCode2){
@@ -144,10 +145,12 @@ int checkPriority(float OpCode1, float OpCode2){
 
 //Check if expression is valid or not for successive tokens T1 and T2
 bool isInvalidExpression(tok T1, tok T2){
-  if (T1.TkType == 1 && T2.TkType == 1){
+  if (T1.TkType == -1)
+      return 0;
+  else if (T1.TkType == 1 && T2.TkType == 1){
       return 1;
   }
-  else if (T1.TkType == 0 && T2.TkType == 0 && T2.TkVal != 6){
+  else if (T1.TkType == 0 && T2.TkType == 0 && T2.TkVal != 8 && T2.TkVal != 6){
       return 1;
   }
   else if (T1.TkType == 1 && T2.TkType == 0 && T2.TkVal == 6){
@@ -161,8 +164,8 @@ int main() {
    int n;
    cin >> n;
 
-   //stack for Operands and Operators
-   calcStack Operators(n), Operands(n);
+   //stack for Operands and Operats
+   calcStack Operats(n), Operands(n);
 
    tok T, T_p, RES;
 
@@ -186,40 +189,40 @@ int main() {
 
       if (T.TkType == 0){
         if (T.TkVal == 6)
-                Operators.push(T);
+                Operats.push(T);
         else if (T.TkVal == 7){
-                while(Operators.valOperatorTop() != 6){
+                while(Operats.valOperatsorTop() != 6){
                   tok T1 = Operands.pop();
                   tok T2 = Operands.pop();
-                  tok Opd = Operators.pop();
-                  RES.TkVal = calcOperation(Opd, T1, T2);
+                  tok Opd = Operats.pop();
+                  RES.TkVal = calcOperatsion(Opd, T1, T2);
                   Operands.push(RES);
                 }
-                tok Opd = Operators.pop();
+                tok Opd = Operats.pop();
             }
-            else if (checkPriority(Operators.valOperatorTop(), T.TkVal) == -1){
+            else if (checkPriority(Operats.valOperatsorTop(), T.TkVal) == -1){
                     tok T1 = Operands.pop();
                     tok T2 = Operands.pop();
-                    tok Opd = Operators.pop();
-                    RES.TkVal = calcOperation(Opd, T1, T2);
+                    tok Opd = Operats.pop();
+                    RES.TkVal = calcOperatsion(Opd, T1, T2);
                     Operands.push(RES);
-                    Operators.push(T);
+                    Operats.push(T);
                   }
                   else if (T.TkVal != 8)
-                      Operators.push(T);
+                      Operats.push(T);
       }
       else
         Operands.push(T);
 
-      //Operaands.displayStack();
-      //Operators.displayStack();
+      // Operands.displayStack();
+      // Operats.displayStack();
    }
 
-   while(! Operators.isEmpty()){
+   while(! Operats.isEmpty()){
      tok T1 = Operands.pop();
      tok T2 = Operands.pop();
-     tok Opd = Operators.pop();
-     RES.TkVal = calcOperation(Opd, T1, T2);
+     tok Opd = Operats.pop();
+     RES.TkVal = calcOperatsion(Opd, T1, T2);
      Operands.push(RES);
    }
 
