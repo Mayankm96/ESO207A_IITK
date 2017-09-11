@@ -9,10 +9,10 @@ struct Tokenizer{
   float TkVal;
 };
 
-//Priority array containg the priorities of operators numbered 1-8
-int PRIORITY[] = {1, 1, 2, 3, 3, 0, 4, 5};
-
 typedef Tokenizer tok;
+
+//Priority array containg the priorities of operators numbered 1-8
+int PRIORITY[] = {1, 1, 2, 3, 3, 0, 5, 4};
 
 tok identifyToken(string Op, tok T_p){
   tok T;
@@ -56,7 +56,7 @@ tok identifyToken(string Op, tok T_p){
   return T;
 }
 
-float calcOperatorsion(tok operat, tok T1, tok T2){
+float calcOperation(tok operat, tok T1, tok T2){
   float output;
   switch((int) operat.TkVal){
     case 1: output = T2.TkVal + T1.TkVal;
@@ -65,7 +65,11 @@ float calcOperatorsion(tok operat, tok T1, tok T2){
             break;
     case 3: output = T2.TkVal * T1.TkVal;
             break;
-    case 4: output = T2.TkVal / T1.TkVal;
+    case 4: if (T1.TkVal == 0 ){
+              cout << "Malformed expression";
+              exit(1);
+            }
+            output = T2.TkVal / T1.TkVal;
             break;
     case 5: output = ((int)T2.TkVal) % ((int)T1.TkVal);
             break;
@@ -122,7 +126,7 @@ class calcStack{
     }
 
      // Used only for operators stack
-     int valOperatorsorTop(){
+     float valOperatorOnTop(){
        if (TOP == -1)
           return -1;
        tok T = S[TOP];
@@ -130,12 +134,11 @@ class calcStack{
      }
 };
 
-
 int checkPriority(float OpCode1, float OpCode2){
   int Op1 = (int) OpCode1 - 1;
   int Op2 = (int) OpCode2 - 1;
   if(PRIORITY[Op1] == PRIORITY[Op2])
-    return 0 ;
+    return -1 ;   //return 0 to make it left to right associtivity
   else if(PRIORITY[Op1] < PRIORITY[Op2])
           return 1;
        else
@@ -146,6 +149,9 @@ int checkPriority(float OpCode1, float OpCode2){
 bool isInvalidExpression(tok T1, tok T2){
   if (T1.TkType == -1)
       return 0;
+  else if (T1.TkType == 0 && T2.TkType == 0 && T1.TkVal == 7){
+    return 0;
+  }
   else if (T1.TkType == 1 && T2.TkType == 1){
       return 1;
   }
@@ -185,7 +191,7 @@ int main() {
      T = identifyToken(Op, T_p);
 
      if (isInvalidExpression(T_p, T)){
-       cout<<"Malformed expression";
+       cout << "Malformed expression";
        return -1;
      }
 
@@ -193,20 +199,20 @@ int main() {
         if (T.TkVal == 6)
                 Operators.push(T);
         else if (T.TkVal == 7){
-                while(Operators.valOperatorsorTop() != 6){
+                while(Operators.valOperatorOnTop() != 6){
                   tok T1 = Operands.pop();
                   tok T2 = Operands.pop();
                   tok Opd = Operators.pop();
-                  RES.TkVal = calcOperatorsion(Opd, T1, T2);
+                  RES.TkVal = calcOperation(Opd, T1, T2);
                   Operands.push(RES);
                 }
                 tok Opd = Operators.pop();
             }
-            else if (checkPriority(Operators.valOperatorsorTop(), T.TkVal) == -1){
+            else if (checkPriority(Operators.valOperatorOnTop(), T.TkVal) == -1){
                     tok T1 = Operands.pop();
                     tok T2 = Operands.pop();
                     tok Opd = Operators.pop();
-                    RES.TkVal = calcOperatorsion(Opd, T1, T2);
+                    RES.TkVal = calcOperation(Opd, T1, T2);
                     Operands.push(RES);
                     Operators.push(T);
                   }
@@ -225,10 +231,10 @@ int main() {
      tok T2 = Operands.pop();
      tok Opd = Operators.pop();
      if (Opd.TkVal == 0 && Opd.TkVal == 6){
-       cout<<"Malformed expression";
+       cout << "Malformed expression";
        return -1;
      }
-     RES.TkVal = calcOperatorsion(Opd, T1, T2);
+     RES.TkVal = calcOperation(Opd, T1, T2);
      Operands.push(RES);
    }
 
