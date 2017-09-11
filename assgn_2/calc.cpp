@@ -88,6 +88,10 @@ class calcStack{
       TOP = -1;
     }
 
+    int lenStack(){
+      return TOP + 1;
+    }
+
     bool isEmpty(){
       if (TOP == -1)
         return 1;
@@ -167,6 +171,12 @@ bool isInvalidExpression(tok T1, tok T2){
   else return 0;
 }
 
+bool isNotOperable(calcStack Operands, calcStack Operators){
+    if(Operators.lenStack() < 1 || Operands.lenStack() < 2 )
+      return 1;
+    else return 0;
+}
+
 int main() {
    // Number of inputs into calculator
    int n;
@@ -200,6 +210,10 @@ int main() {
                 Operators.push(T);
         else if (T.TkVal == 7){
                 while(Operators.valOperatorOnTop() != 6){
+                  if (isNotOperable(Operands, Operators)){
+                    cout << "Malformed expression";
+                    return -1;
+                  }
                   tok T1 = Operands.pop();
                   tok T2 = Operands.pop();
                   tok Opd = Operators.pop();
@@ -209,6 +223,10 @@ int main() {
                 tok Opd = Operators.pop();
             }
             else if (checkPriority(Operators.valOperatorOnTop(), T.TkVal) == -1){
+                    if (isNotOperable(Operands, Operators)){
+                      cout << "Malformed expression";
+                      return -1;
+                    }
                     tok T1 = Operands.pop();
                     tok T2 = Operands.pop();
                     tok Opd = Operators.pop();
@@ -227,6 +245,10 @@ int main() {
    }
 
    while(! Operators.isEmpty()){
+     if (isNotOperable(Operands, Operators)){
+       cout << "Malformed expression";
+       return -1;
+     }
      tok T1 = Operands.pop();
      tok T2 = Operands.pop();
      tok Opd = Operators.pop();
