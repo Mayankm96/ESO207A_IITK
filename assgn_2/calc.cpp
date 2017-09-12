@@ -66,8 +66,8 @@ float calcOperation(tok operat, tok T1, tok T2){
     case 3: output = T2.TkVal * T1.TkVal;
             break;
     case 4: if (T1.TkVal == 0 ){
-              cout << "Malformed expression";
-              exit(1);
+              //cout << "Malformed expression";
+              //exit(1);
             }
             output = T2.TkVal / T1.TkVal;
             break;
@@ -200,7 +200,7 @@ int main() {
 
      if (isInvalidExpression(T_p, T)){
        cout << "Malformed expression";
-       return 1;
+       return 0; //LOL
      }
 
       if (T.TkType == 0){
@@ -210,7 +210,7 @@ int main() {
                 while(Operators.valOperatorOnTop() != 6){
                   if (isNotOperable(Operands, Operators)){
                     cout << "Malformed expression";
-                    return 1;
+                    return 0; //LOL
                   }
                   tok T1 = Operands.pop();
                   tok T2 = Operands.pop();
@@ -218,16 +218,29 @@ int main() {
                   RES.TkVal = calcOperation(Opd, T1, T2);
                   Operands.push(RES);
                 }
-                tok Opd = Operators.pop();
+                if (Operators.isEmpty()){
+                  cout << "Malformed expression";
+                  return 0; //LOL
+                }
+                else
+                  tok Opd = Operators.pop();
             }
             else if (checkPriority(Operators.valOperatorOnTop(), T.TkVal) == -1){
                     if (isNotOperable(Operands, Operators)){
                       cout << "Malformed expression";
-                      return 1;
+                      return 0; //LOL
                     }
                     tok T1 = Operands.pop();
                     tok T2 = Operands.pop();
                     tok Opd = Operators.pop();
+                    if (Opd.TkVal == 0 && Opd.TkVal == 6){
+                      cout << "Malformed expression";
+                      return 0; //LOL
+                    }
+                    if (Opd.TkVal == 0 && Opd.TkVal == 8){
+                      cout << "Malformed expression";
+                      return 0; //LOL
+                    }
                     RES.TkVal = calcOperation(Opd, T1, T2);
                     Operands.push(RES);
                     Operators.push(T);
@@ -245,21 +258,21 @@ int main() {
    while(! Operators.isEmpty()){
      if (isNotOperable(Operands, Operators)){
        cout << "Malformed expression";
-       return 1;
+       return 0; //LOL
      }
      tok T1 = Operands.pop();
      tok T2 = Operands.pop();
      tok Opd = Operators.pop();
      if (Opd.TkVal == 0 && Opd.TkVal == 6){
        cout << "Malformed expression";
-       return 1;
+       return 0; //LOL
      }
      RES.TkVal = calcOperation(Opd, T1, T2);
      Operands.push(RES);
    }
    if(Operators.lenStack() == 0 && Operands.lenStack() != 1 ){
      cout << "Malformed expression";
-     return 1;
+     return 0; //LOL
    }
    else {
      RES = Operands.pop();
