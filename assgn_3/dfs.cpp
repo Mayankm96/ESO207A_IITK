@@ -35,8 +35,20 @@ class Graph
                 for (i = AdjList_[v].begin(); i != AdjList_[v].end(); ++i){
                     cout << *i << " ";
                 }
-                cout << endl;
+                cout << "-1"<< endl;
             }
+        }
+
+        Graph reverseGraph(){
+          Graph G_rev(this->V_);
+          int v;
+          vector<int>::iterator i;
+          for (v = 0; v<this->V_; v++){
+            for (i = this->AdjList_[v].begin(); i != this->AdjList_[v].end(); ++i){
+                G_rev.addEdge(*i, v);
+            }
+          }
+          return G_rev;
         }
 };
 
@@ -57,6 +69,9 @@ int main(){
     }
   }
 
+  Graph G_rev = G.reverseGraph();
   G.printGraph();
+  G_rev.printGraph();
+
   return 0;
 }
