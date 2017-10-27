@@ -5,16 +5,17 @@
 
 using namespace std;
 
-enum Color { WHITE, GREY };
+enum Color { WHITE, GREY, BLACK };
 
 // structure Vertex for DFS
 struct Vertex{
   int id;      // vertex number allocated
-  bool color;  // visit status
+  int color;  // visit status
   int d;       // discovery time
   int f;       // finishing time
 };
 
+// Compare the struct Vertex on the basis of their finishing times
 int compare(const void *s1, const void *s2){
       struct Vertex *v1 = (struct Vertex *)s1;
       struct Vertex *v2 = (struct Vertex *)s2;
@@ -26,6 +27,7 @@ int compare(const void *s1, const void *s2){
             return -1;
 }
 
+// Returns the distinct elements present in the array
 int* arrayDistinct(int arr[], int n1, int n2)
 {
     int * des = new int [n2];
@@ -57,9 +59,10 @@ class Graph
     protected:
       // Explore the graph starting from a source node s
       void dfsExplore(int s, Vertex U[], int &t){
+        cout<<"In :"<<s<<endl;
         t = t + 1;
         U[s].d = t;
-        U[s].color = GREY;
+        U[s].color = BLACK;
         vector<int>::iterator i;
         for (i = this->AdjList_[s].begin(); i != this->AdjList_[s].end(); ++i){
             if ( U[*i].color == WHITE){
@@ -68,6 +71,13 @@ class Graph
         }
         t = t + 1;
         U[s].f = t;
+        U[s].color = BLACK;
+      }
+
+      // Sorting the vertices according to finishing time
+      Vertex * sortVertex(Vertex U[]){
+        qsort(U, V_, sizeof(struct Vertex), compare);
+        return U;
       }
 
     public:
@@ -128,16 +138,14 @@ class Graph
           return U;
         }
 
-        // Sorting the vertices according to finishing time
-        Vertex * sortVertex(Vertex U[]){
-          qsort(U, V_, sizeof(struct Vertex), compare);
-          return U;
-        }
-
         Graph stronglyConnectedGraph(){
+          // Carry out dfs on trnaspose of G
           Graph G_rev = this->reverseGraph();
           Vertex * U = G_rev.depthFirstSearch();
-          U = G_rev.sortVertex(U);
+          U = sortVertex(U);
+          // for (int lol = 0 ; lol< V_; lol ++){
+          //   cout << U[lol].id << "-> " << U[lol].f<<endl;
+          // }
           // initialization
           int i, t = 0;
           for (i = 0; i < V_; i ++){
@@ -145,11 +153,13 @@ class Graph
           }
           int parent = 0, numSCC = 0;
           int * SCC = new int [V_];
-          // iterate over all edges
+
+          printGraph();
+          // iterate over all edges and perform dfs
           for (i = 0 ; i< V_; i++){
             if ( U[i].color == WHITE) {
+              cout << "node: " << U[i].id << endl;
               this->dfsExplore(U[i].id, U, t);
-              // cout << "BHS+OSDIWAALA: " <<U[i].id<<endl;
               parent = U[i].id;
               SCC[parent] = U[i].id;
               numSCC ++;
@@ -165,33 +175,34 @@ class Graph
                   }
                 }
             }
+            cout << U[i].id << " status: " << U[i].color <<endl;
           }
 
-          int * eSCC = arrayDistinct(SCC, V_, numSCC);
-          sort(eSCC, eSCC + numSCC);
+          // int * eSCC = arrayDistinct(SCC, V_, numSCC);
+          // sort(eSCC, eSCC + numSCC);
 
-          for( int l = 0; l < V_; l++){
-              cout << l << ": " << SCC[l] << endl;
-          }
-          for (int k = 0; k < numSCC; k++){
-            // cout << "PARENT" << k << ": " << eSCC[k] << endl;
-            for( int l = 0; l < V_; l++){
-              if(SCC[l] == eSCC[k])
-                // cout << l << ": " << k << endl;
-                SCC[l] = k;
-            }
-          }
-
+        //   for( int l = 0; l < V_; l++){
+        //       cout << l << ": " << SCC[l] << endl;
+        //   }
+        //   for (int k = 0; k < numSCC; k++){
+        //     // cout << "PARENT" << k << ": " << eSCC[k] << endl;
+        //     for( int l = 0; l < V_; l++){
+        //       if(SCC[l] == eSCC[k])
+        //         // cout << l << ": " << k << endl;
+        //         SCC[l] = k;
+        //     }
+        //   }
+        //
           Graph G_scc(numSCC);
-          int v;
-          vector<int>::iterator j;
-          for (v = 0; v < V_; ++v){
-              for (j = AdjList_[v].begin(); j != AdjList_[v].end(); ++j){
-                if (SCC[v]!=SCC[*j]){
-                  G_scc.addEdge(SCC[v], SCC[*j]);
-                }
-              }
-          }
+        //   int v;
+        //   vector<int>::iterator j;
+        //   for (v = 0; v < V_; ++v){
+        //       for (j = AdjList_[v].begin(); j != AdjList_[v].end(); ++j){
+        //         if (SCC[v]!=SCC[*j]){
+        //           G_scc.addEdge(SCC[v], SCC[*j]);
+        //         }
+        //       }
+        //   }
           return G_scc;
         }
 };
@@ -214,7 +225,6 @@ int main(){
       cin >> dest;
     }
   }
-
   Graph G_scc = G.stronglyConnectedGraph();
   G_scc.printGraph();
 
