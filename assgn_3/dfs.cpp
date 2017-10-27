@@ -83,9 +83,9 @@ class Graph
                 // cout << v << ": ";
                 std::sort (AdjList_[v].begin(), AdjList_[v].end());
                 for (i = AdjList_[v].begin(); i != AdjList_[v].end(); ++i){
-                    cout << *i << " ";
+                    cout << *i << ' ';
                 }
-                cout << "-1"<< endl;
+                cout << "-1" << endl;
             }
         }
 
@@ -130,7 +130,8 @@ class Graph
             U[i].color = WHITE;
           }
           int parent = 0, numSCC = 0;
-          int * SCC = new int [V_];
+          // array to keep track of parent in connected component
+          int * order = new int [V_];
 
           // iterate over all edges and perform dfs
           while ( ! G_rev.DfsStack_.empty()){
@@ -138,17 +139,17 @@ class Graph
             if ( U[id].color == WHITE) {
               this->dfsExplore(id, U, t);
               parent = id;
-              SCC[parent] = id;
+              order[parent] = id;
               numSCC ++;
             }
             else {
-              SCC[id] = parent;
+              order[id] = parent;
               int tmp = parent;
               parent = min(parent,id);
               if (tmp != parent)
                 for (i = 0 ; i< V_; i++){
-                  if ( SCC[i] == tmp) {
-                    SCC[i] = parent;
+                  if ( order[i] == tmp) {
+                    order[i] = parent;
                   }
                 }
             }
@@ -156,13 +157,14 @@ class Graph
             // cout << "exit " <<id << " status: " << U[id].color <<endl;
           }
 
-          int * eSCC = arrayDistinct(SCC, V_, numSCC);
-          sort(eSCC, eSCC + numSCC);
+          // array to store the labels for connected component
+          int * label = arrayDistinct(order, V_, numSCC);
+          sort(label, label + numSCC);
 
           for (int k = 0; k < numSCC; k++){
             for( int l = 0; l < V_; l++){
-              if(SCC[l] == eSCC[k])
-                SCC[l] = k;
+              if(order[l] == label[k])
+                order[l] = k;
             }
           }
 
@@ -171,8 +173,8 @@ class Graph
           vector<int>::iterator j;
           for (v = 0; v < V_; ++v){
               for (j = AdjList_[v].begin(); j != AdjList_[v].end(); ++j){
-                if (SCC[v]!=SCC[*j]){
-                  G_scc.addEdge(SCC[v], SCC[*j]);
+                if (order[v]!=order[*j]){
+                  G_scc.addEdge(order[v], order[*j]);
                 }
               }
           }
