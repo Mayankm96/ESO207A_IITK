@@ -68,6 +68,15 @@ class Graph
             // cout << "Graph initiated successfully!" << endl;
         }
 
+        ~Graph(){
+            for(int i = 0; i < V_; i++){
+              AdjList_[i].clear();
+            }
+            while (! DfsStack_.empty()){
+              DfsStack_.pop();
+            }
+        }
+
         // Adding Edge to Graph
         void addEdge(int src, int dest){
             AdjList_[src].push_back(dest);
@@ -144,14 +153,6 @@ class Graph
             }
             else {
               order[id] = parent;
-              int tmp = parent;
-              parent = min(parent,id);
-              if (tmp != parent)
-                for (i = 0 ; i< V_; i++){
-                  if ( order[i] == tmp) {
-                    order[i] = parent;
-                  }
-                }
             }
             G_rev.DfsStack_.pop();
             // cout << "exit " <<id << " status: " << U[id].color <<endl;
@@ -159,7 +160,7 @@ class Graph
 
           // array to store the labels for connected component
           int * label = arrayDistinct(order, V_, numSCC);
-          sort(label, label + numSCC);
+          std::sort(label, label + numSCC);
 
           for (int k = 0; k < numSCC; k++){
             for( int l = 0; l < V_; l++){
@@ -173,7 +174,7 @@ class Graph
           vector<int>::iterator j;
           for (v = 0; v < V_; ++v){
               for (j = AdjList_[v].begin(); j != AdjList_[v].end(); ++j){
-                if (order[v]!=order[*j]){
+                if (order[v] != order[*j]){
                   G_scc.addEdge(order[v], order[*j]);
                 }
               }
@@ -181,8 +182,6 @@ class Graph
           return G_scc;
         }
 };
-
-
 
 int main(){
   // Number of vertices in graph
