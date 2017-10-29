@@ -35,6 +35,31 @@ int* arrayDistinct(int arr[], int n1, int n2)
     return des;
 }
 
+// find the min element in stack
+int minElement(std::stack<int> Stack){
+  std::stack<int> stackCopy = Stack;
+  std::vector<int> V;
+  int min = stackCopy.top();
+  stackCopy.pop();
+  while (! stackCopy.empty()){
+    if (min > stackCopy.top()){
+      min = stackCopy.top();
+    }
+    stackCopy.pop();
+  }
+  return min;
+}
+
+// view the stack
+void viewDfsSatck(std::stack<int> Stack){
+  std::stack<int> stackCopy = Stack;
+  cout << "Showing Stack!" << endl;
+  while (! stackCopy.empty()){
+    cout << stackCopy.top() << endl;
+    stackCopy.pop();
+  }
+}
+
 // Class Graph
 class Graph
 {
@@ -46,9 +71,10 @@ class Graph
     protected:
       // Explore the graph starting from a source node s
       void dfsExplore(int s, Vertex U[], int &t){
+        // cout << "dfs at " << s <<endl;
         t = t + 1;
         U[s].d = t;
-        U[s].color = BLACK;
+        U[s].color = GREY;
         vector<int>::iterator i;
         for (i = this->AdjList_[s].begin(); i != this->AdjList_[s].end(); ++i){
             if ( U[*i].color == WHITE){
@@ -128,34 +154,36 @@ class Graph
         }
 
         Graph stronglyConnectedGraph(){
-          // Carry out dfs on trnaspose of G
+          // Carry out dfs on  G
+          this->depthFirstSearch();
+
+          // compute transpose of G
           Graph G_rev = this->reverseGraph();
-          G_rev.depthFirstSearch();
-          Vertex * U = new Vertex [V_];
 
           // initialization
+          Vertex * U = new Vertex [V_];
           int i, t = 0;
           for (i = 0; i < V_; i ++){
             U[i].color = WHITE;
           }
-          int parent = 0, numSCC = 0;
+          int numSCC = 0;
           // array to keep track of parent in connected component
           int * order = new int [V_];
 
           // iterate over all edges and perform dfs
-          while ( ! G_rev.DfsStack_.empty()){
-            int id = G_rev.DfsStack_.top();
+          while ( ! this->DfsStack_.empty()){
+            int id = this->DfsStack_.top();
             if ( U[id].color == WHITE) {
-              this->dfsExplore(id, U, t);
-              parent = id;
-              order[parent] = id;
+              G_rev.dfsExplore(id, U, t);
+              int parent = minElement(G_rev.DfsStack_);
+              while (! G_rev.DfsStack_.empty()){
+                order[G_rev.DfsStack_.top()] = parent;
+                G_rev.DfsStack_.pop();
+              }
               numSCC ++;
             }
-            else {
-              order[id] = parent;
-            }
-            G_rev.DfsStack_.pop();
-            // cout << "exit " <<id << " status: " << U[id].color <<endl;
+            this->DfsStack_.pop();
+            // cout << "exit " << id << ", status: " << U[id].color << ", order: " << order[id] <<endl;
           }
 
           // array to store the labels for connected component
