@@ -87,6 +87,16 @@ class Graph
         DfsStack_.push(s);
       }
 
+      bool isNewEdge(int src, int des){
+        vector<int>::iterator i;
+        for (i = AdjList_[src].begin(); i != AdjList_[src].end(); ++i){
+            if ( *i == des){
+              return false;
+            }
+        }
+        return true;
+      }
+
     public:
         Graph(int V){
             V_ = V;
@@ -203,7 +213,7 @@ class Graph
           vector<int>::iterator j;
           for (v = 0; v < V_; ++v){
               for (j = AdjList_[v].begin(); j != AdjList_[v].end(); ++j){
-                if (order[v] != order[*j]){
+                if (order[v] != order[*j] && G_scc.isNewEdge(order[v], order[*j])){
                   G_scc.addEdge(order[v], order[*j]);
                 }
               }
