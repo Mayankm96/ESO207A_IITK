@@ -9,7 +9,7 @@ enum Color { WHITE, GREY, BLACK };
 
 // structure Vertex for DFS
 struct Vertex{
-  int color;  // visit status
+  int color;   // visit status
   int d;       // discovery time
   int f;       // finishing time
 };
@@ -87,6 +87,7 @@ class Graph
         DfsStack_.push(s);
       }
 
+      // checks if the edge pre-exists in graph or not
       bool isNewEdge(int src, int des){
         vector<int>::iterator i;
         for (i = AdjList_[src].begin(); i != AdjList_[src].end(); ++i){
@@ -115,8 +116,10 @@ class Graph
 
         // Adding Edge to Graph
         void addEdge(int src, int dest){
-            AdjList_[src].push_back(dest);
-            // cout << "added edge from " << src << "->" << dest << endl;
+            if (isNewEdge(src, dest)){
+              AdjList_[src].push_back(dest);
+              // cout << "added edge from " << src << "->" << dest << endl;
+            }
         }
 
         // Print the graph
@@ -148,7 +151,7 @@ class Graph
           return G_rev;
         }
 
-        // Peform DFS on the entire graph
+        // Peforms standard DFS on the entire graph
         void depthFirstSearch(){
           // initialization
           int i, t = 0;
@@ -177,6 +180,7 @@ class Graph
           for (i = 0; i < V_; i ++){
             U[i].color = WHITE;
           }
+          // numSCC counts the number of strongly connected components in graph
           int numSCC = 0;
           // array to keep track of parent in connected component
           int * order = new int [V_];
