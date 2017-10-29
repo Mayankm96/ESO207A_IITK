@@ -113,14 +113,15 @@ class Graph
         void printGraph(){
             int v;
             vector<int>::iterator i;
-            cout << V_ << endl;
+            cout << V_;
             for (v = 0; v < V_; ++v){
                 // cout << v << ": ";
+                cout << endl;
                 std::sort (AdjList_[v].begin(), AdjList_[v].end());
                 for (i = AdjList_[v].begin(); i != AdjList_[v].end(); ++i){
                     cout << *i << ' ';
                 }
-                cout << "-1" << endl;
+                cout << "-1";
             }
         }
 
