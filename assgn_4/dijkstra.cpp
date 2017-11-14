@@ -1,7 +1,8 @@
 #include <iostream>
 #include <stdio.h>
-#include <string>
-#include <bits/stdc++.h>
+#include <climits>
+#include <vector>
+#include <utility>
 
 #define DEBUG false
 typedef long long int llint;
@@ -153,8 +154,7 @@ class MinPriorityQueue{
     }
 };
 
-class Graph
-{
+class Graph {
     private:
         llint V_;
         std::vector<Edge> * AdjList_;
@@ -162,7 +162,6 @@ class Graph
     protected:
       // perform the initialization of source for Dijkstra's algorithm
       void initSingleSource(llint source){
-        nodes = new Vertex [V_];
         llint i = 0;
         for(i = 0; i < V_; i++){
           nodes[i].distance = LLONG_MAX;
@@ -233,14 +232,16 @@ int main(){
 
   //initialize graph
   Graph G(N);
+  nodes = new Vertex [N];
 
   // add edges to the graph
+  llint i, deg, des, j, w;
   for(llint src = 0; src < N; src++){
-    llint i = src + 1;
-    llint deg = (i*C[1] + i*i*D[1]) % Degree;
-    for (llint j = 1; j <= deg; j++){
-      llint des = (i*C[0] + j*D[0]) % N;
-      llint w = (i*W[0] + j*W[1] ) % W[3];
+    i = src + 1;
+    deg = (i*C[1] + i*i*D[1]) % Degree;
+    for (j = 1; j <= deg; j++){
+      des = (i*C[0] + j*D[0]) % N;
+      w = (i*W[0] + j*W[1] ) % W[3];
       G.addEdge(src, des, w);
     }
   }
