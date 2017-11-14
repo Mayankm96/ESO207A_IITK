@@ -183,12 +183,12 @@ class Graph
 
         // Adding Edge to Graph
         void addEdge(llint src, llint dest, llint w){
-              Edge e;
-              e.destination = dest;
-              e.weight = w;
-              AdjList_[src].push_back(e);
-              if (DEBUG)
-                cout << "added edge from " << src + 1 << "->" << dest + 1 << " with weight: " << w << endl;
+            Edge e;
+            e.destination = dest;
+            e.weight = w;
+            AdjList_[src].push_back(e);
+            if (DEBUG)
+              cout << "added edge from " << src + 1 << "->" << dest + 1 << " with weight: " << w << endl;
         }
 
         // perfrom Dijkstra's Algorithm for shortest path searches
