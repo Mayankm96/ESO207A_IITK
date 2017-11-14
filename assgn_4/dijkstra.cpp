@@ -14,6 +14,7 @@ struct Vertex{
   llint parent;         // predecessor
 };
 
+// structure Edge to store the weighted graph edges
 struct Edge{
   llint destination;    // destination node's ID
   llint weight;         // edge weight
@@ -21,16 +22,15 @@ struct Edge{
 
 // Global variables to store nodes information
 Vertex * nodes;
-Edge * edges;
 
 class MinPriorityQueue{
   private:
-    llint * Q_;
-    llint end_;
-    llint size_;
+    llint * Q_;   // queue
+    llint end_;   // last element present in the queue
+    llint size_;  // initialized size of queue
 
   protected:
-    llint * location_;
+    llint * location_;  // location of a node id in queue
 
     llint leftNode(llint i){
       return 2*i + 1;
@@ -44,19 +44,24 @@ class MinPriorityQueue{
       return (i-1)/2;
     }
 
+    // perform exchange between two array indices
     void exchange(llint a, llint b){
+      // modifying location
       location_[Q_[a]] = b;
       location_[Q_[b]] = a;
 
+      // swapping in heap
       llint tmp = Q_[a];
       Q_[a] = Q_[b];
       Q_[b] = tmp;
     }
 
+    // returns the index of a node id in the queue
     llint searchID(llint id){
       return location_[id];
     }
 
+    // performs the min heapify method
     void minHeapify(int i){
         llint minindex = i;
         llint left = leftNode(i);
@@ -81,6 +86,7 @@ class MinPriorityQueue{
       end_ = -1;
     }
 
+    // checks if heap is empty or not
     bool isEmpty(){
       if(end_ == -1)
         return 1;
@@ -88,6 +94,7 @@ class MinPriorityQueue{
         return 0;
     }
 
+    // insert a new element into the heap
     void insert(llint id){
       end_ = end_ + 1;
 
@@ -108,6 +115,7 @@ class MinPriorityQueue{
       }
     }
 
+    // change the key for a node with id in the heap
     void changeKey(llint id, llint key){
       llint index = searchID(id);
 
@@ -126,6 +134,7 @@ class MinPriorityQueue{
 
     }
 
+    // delete the smallest element present in the queue
     llint deleteMin(){
       llint min = Q_[0];
       Q_[0] = Q_[end_];
@@ -137,6 +146,7 @@ class MinPriorityQueue{
       return min;
     }
 
+    // check if a given node id is present in the heap or not
     bool isInHeap(int id){
       if(location_[id] == -1)
         return false;
@@ -152,16 +162,15 @@ class Graph
         std::vector<Edge> * AdjList_;
 
     protected:
-
-      // checks if the edge pre-exists in graph or not
-      bool isNewEdge(llint src, llint des){
-        vector<Edge>::iterator i;
-        for (i = AdjList_[src].begin(); i != AdjList_[src].end(); ++i){
-            if ( i->destination == des){
-              return false;
-            }
+      // perform the initialization of source for Dijkstra's algorithm
+      void initSingleSource(llint source){
+        nodes = new Vertex [V_];
+        llint i = 0;
+        for(i = 0; i < V_; i++){
+          nodes[i].distance = LLONG_MAX;
+          nodes[i].parent = -1;
         }
-        return true;
+        nodes[source].distance = 0;
       }
 
     public:
@@ -174,26 +183,15 @@ class Graph
 
         // Adding Edge to Graph
         void addEdge(llint src, llint dest, llint w){
-            if (isNewEdge(src, dest)){
               Edge e;
               e.destination = dest;
               e.weight = w;
               AdjList_[src].push_back(e);
               if (DEBUG)
                 cout << "added edge from " << src + 1 << "->" << dest + 1 << " with weight: " << w << endl;
-            }
         }
 
-        void initSingleSource(llint source){
-            nodes = new Vertex [V_];
-            llint i = 0;
-            for(i = 0; i < V_; i++){
-              nodes[i].distance = INT_MAX;
-              nodes[i].parent = -1;
-            }
-            nodes[source].distance = 0;
-        }
-
+        // perfrom Dijkstra's Algorithm for shortest path searches
         void dijkstraSingleSource(int source){
           initSingleSource(source);
           MinPriorityQueue Q(V_);
@@ -233,6 +231,7 @@ int main(){
   //initialize graph
   Graph G(N);
 
+  // add edges to the graph
   for(llint src = 0; src < N; src++){
     llint i = src + 1;
     llint deg = (i*C[1] + i*i*D[1]) % Degree;
@@ -245,8 +244,10 @@ int main(){
 
   G.dijkstraSingleSource(S-1);
 
+  // print output
   for(llint i = 0; i < N; i++){
-    if(nodes[i].distance == INT_MAX)
+    // not reachable nodes
+    if(nodes[i].distance == LLONG_MAX)
       nodes[i].distance = -1;
     cout << i + 1 << " " << nodes[i].distance << endl;
   }
