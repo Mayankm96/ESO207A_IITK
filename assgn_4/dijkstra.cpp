@@ -193,11 +193,15 @@ class Graph
 
         // perfrom Dijkstra's Algorithm for shortest path searches
         void dijkstraSingleSource(int source){
+          // singe source initialization
           initSingleSource(source);
+
+          // initialize min priority queue
           MinPriorityQueue Q(V_);
           for(llint i = 0; i < V_; i++){
             Q.insert(i);
           }
+
           while (! Q.isEmpty()){
             llint u = Q.deleteMin();
             vector<Edge>::iterator i;
@@ -206,6 +210,7 @@ class Graph
                 llint w = i-> weight;
                 if (DEBUG)
                   cout << "Considering: "<< u+1 << "->" << v+1 << endl;
+                // check for relax edge conditions
                 if (nodes[v].distance > nodes[u].distance + w && Q.isInHeap(v)){
                   if (DEBUG)
                     cout << "Your connection is changing: " << u+1 << " -> " << v+1 << endl;
