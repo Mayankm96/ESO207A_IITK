@@ -4,17 +4,19 @@
 #include <bits/stdc++.h>
 
 #define DEBUG false
+typedef long long int llint;
+
 using namespace std;
 
 // structure Vertex for Dijkstra's Algorithm
 struct Vertex{
-  long long int distance;       // distance
-  int parent;                   // predecessor
+  llint distance;       // distance
+  llint parent;                   // predecessor
 };
 
 struct Edge{
-  int destination;              // destination node's ID
-  long long int weight;         // edge weight
+  llint destination;              // destination node's ID
+  llint weight;         // edge weight
 };
 
 // Global variables to store nodes information
@@ -23,30 +25,30 @@ Edge * edges;
 
 class MinPriorityQueue{
   private:
-    int * Q_;
-    int end_;
-    int size_;
+    llint * Q_;
+    llint end_;
+    llint size_;
 
   protected:
-    int * location_;
+    llint * location_;
 
-    void exchange(int a, int b){
+    void exchange(llint a, llint b){
       location_[Q_[a]] = b;
       location_[Q_[b]] = a;
 
-      int tmp = Q_[a];
+      llint tmp = Q_[a];
       Q_[a] = Q_[b];
       Q_[b] = tmp;
     }
 
-    int searchID(int id){
+    llint searchID(llint id){
       return location_[id];
     }
 
   public:
-    MinPriorityQueue(int V){
-      Q_ = new int [V];
-      location_ = new int [V];
+    MinPriorityQueue(llint V){
+      Q_ = new llint [V];
+      location_ = new llint [V];
       size_ = V;
       end_ = -1;
     }
@@ -58,7 +60,7 @@ class MinPriorityQueue{
         return 0;
     }
 
-    void insert(int id){
+    void insert(llint id){
       end_ = end_ + 1;
 
       if (end_ > size_){
@@ -67,8 +69,8 @@ class MinPriorityQueue{
 
       Q_[end_] = id;
       //heapify
-      int i = end_;
-      int parent = i/2;
+      llint i = end_;
+      llint parent = i/2;
       while (i > 0 && (nodes[Q_[parent]].distance > nodes[Q_[i]].distance)){
         exchange(parent, i);
         i = parent;
@@ -77,8 +79,8 @@ class MinPriorityQueue{
       location_[id] = i;
     }
 
-    void changeKey(int id, long long int key){
-      int index = searchID(id);
+    void changeKey(llint id, llint key){
+      llint index = searchID(id);
 
       if (nodes[Q_[index]].distance < key){
         cout << "ERROR!";
@@ -87,8 +89,8 @@ class MinPriorityQueue{
       nodes[Q_[index]].distance = key;
 
       //heapify
-      int i = index;
-      int parent = i/2;
+      llint i = index;
+      llint parent = i/2;
       while (i > 0 && (nodes[Q_[parent]].distance > nodes[Q_[i]].distance)){
         exchange(parent, i);
         i = parent;
@@ -101,9 +103,9 @@ class MinPriorityQueue{
     }
 
     void minHeapify(int i){
-        int minindex = i;
-        int left = 2*i;
-        int right = 2*i + 1;
+        llint minindex = i;
+        llint left = 2*i;
+        llint right = 2*i + 1;
 
         if (left <= end_ && nodes[Q_[left]].distance < nodes[Q_[i]].distance)
           minindex = left;
@@ -116,8 +118,8 @@ class MinPriorityQueue{
         }
     }
 
-    int deleteMin(){
-      int min = Q_[0];
+    llint deleteMin(){
+      llint min = Q_[0];
       Q_[0] = Q_[end_];
       end_ = end_ - 1;
       minHeapify(0);
@@ -134,7 +136,7 @@ class MinPriorityQueue{
         return true;
     }
 
-    int top(){
+    llint top(){
       return Q_[0];
     }
 };
@@ -142,13 +144,13 @@ class MinPriorityQueue{
 class Graph
 {
     private:
-        int V_;
+        llint V_;
         std::vector<Edge> * AdjList_;
 
     protected:
 
       // checks if the edge pre-exists in graph or not
-      bool isNewEdge(int src, int des){
+      bool isNewEdge(llint src, llint des){
         vector<Edge>::iterator i;
         for (i = AdjList_[src].begin(); i != AdjList_[src].end(); ++i){
             if ( i->destination == des){
@@ -159,7 +161,7 @@ class Graph
       }
 
     public:
-        Graph(int V){
+        Graph(llint V){
             V_ = V;
             AdjList_ = new std::vector<Edge> [V];
             if (DEBUG)
@@ -167,7 +169,7 @@ class Graph
         }
 
         // Adding Edge to Graph
-        void addEdge(int src, int dest, long long int w){
+        void addEdge(llint src, llint dest, llint w){
             if (isNewEdge(src, dest)){
               Edge e;
               e.destination = dest;
@@ -178,9 +180,9 @@ class Graph
             }
         }
 
-        void initSingleSource(int source){
+        void initSingleSource(llint source){
             nodes = new Vertex [V_];
-            int i = 0;
+            llint i = 0;
             for(i = 0; i < V_; i++){
               nodes[i].distance = INT_MAX;
               nodes[i].parent = -1;
@@ -191,15 +193,15 @@ class Graph
         void dijkstraSingleSource(int source){
           initSingleSource(source);
           MinPriorityQueue Q(V_);
-          for(int i = 0; i < V_; i++){
+          for(llint i = 0; i < V_; i++){
             Q.insert(i);
           }
           while (! Q.isEmpty()){
-            int u = Q.deleteMin();
+            llint u = Q.deleteMin();
             vector<Edge>::iterator i;
             for (i = AdjList_[u].begin(); i != AdjList_[u].end(); ++i){
-                int v = i-> destination;
-                long long int w = i-> weight;
+                llint v = i-> destination;
+                llint w = i-> weight;
                 if (DEBUG)
                   cout << "Considering: "<< u+1 << "->" << v+1 << endl;
                 if (nodes[v].distance > nodes[u].distance + w && Q.isInHeap(v)){
@@ -217,8 +219,8 @@ class Graph
 
 int main(){
 
-  int N, S, Degree;
-  long long int C[2], D[2], W[3];
+  llint N, S, Degree;
+  llint C[2], D[2], W[3];
   cin >> N;          // Number of vertices in graph
   cin >> S;          // Source Vertex
   cin >> Degree;     // Max degree in graph
@@ -227,19 +229,19 @@ int main(){
   //initialize graph
   Graph G(N);
 
-  for(int src = 0; src < N; src++){
-    int i = src + 1;
-    int deg = (i*C[1] + i*i*D[1]) % Degree;
-    for (int j = 1; j <= deg; j++){
-      int des = (i*C[0] + j*D[0]) % N;
-      long long int w = (i*W[0] + j*W[1] ) % W[3];
+  for(llint src = 0; src < N; src++){
+    llint i = src + 1;
+    llint deg = (i*C[1] + i*i*D[1]) % Degree;
+    for (llint j = 1; j <= deg; j++){
+      llint des = (i*C[0] + j*D[0]) % N;
+      llint w = (i*W[0] + j*W[1] ) % W[3];
       G.addEdge(src, des, w);
     }
   }
 
   G.dijkstraSingleSource(S-1);
 
-  for(int i = 0; i < N; i++){
+  for(llint i = 0; i < N; i++){
     if(nodes[i].distance == INT_MAX)
       nodes[i].distance = -1;
     cout << i + 1 << " " << nodes[i].distance << endl;
