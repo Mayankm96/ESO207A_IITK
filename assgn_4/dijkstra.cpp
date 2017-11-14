@@ -32,6 +32,18 @@ class MinPriorityQueue{
   protected:
     llint * location_;
 
+    llint leftNode(llint i){
+      return 2*i + 1;
+    }
+
+    llint rightNode(llint i){
+      return 2*i + 2;
+    }
+
+    llint parentNode(llint i){
+      return (i-1)/2;
+    }
+
     void exchange(llint a, llint b){
       location_[Q_[a]] = b;
       location_[Q_[b]] = a;
@@ -47,8 +59,8 @@ class MinPriorityQueue{
 
     void minHeapify(int i){
         llint minindex = i;
-        llint left = 2*i;
-        llint right = 2*i + 1;
+        llint left = leftNode(i);
+        llint right = rightNode(i);
 
         if (left <= end_ && nodes[Q_[left]].distance < nodes[Q_[i]].distance)
           minindex = left;
@@ -84,35 +96,31 @@ class MinPriorityQueue{
       }
 
       Q_[end_] = id;
+      location_[id] = end_;
+
       //heapify
       llint i = end_;
-      llint parent = i/2;
+      llint parent = parentNode(i);
       while (i > 0 && (nodes[Q_[parent]].distance > nodes[Q_[i]].distance)){
         exchange(parent, i);
         i = parent;
-        parent = i/2;
+        parent = parentNode(i);
       }
-      location_[id] = i;
     }
 
     void changeKey(llint id, llint key){
       llint index = searchID(id);
 
-      if (nodes[Q_[index]].distance < key){
-        cout << "ERROR!";
-        return;
-      }
       nodes[Q_[index]].distance = key;
 
       //heapify
       llint i = index;
-      llint parent = i/2;
+      llint parent = parentNode(i);
       while (i > 0 && (nodes[Q_[parent]].distance > nodes[Q_[i]].distance)){
         exchange(parent, i);
         i = parent;
-        parent = i/2;
+        parent = parentNode(i);
       }
-      location_[id] = i;
       if (DEBUG)
         cout << "CHANGEKEY DONE, now top at: " << Q_[0] + 1 << endl;
 
