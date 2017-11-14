@@ -248,11 +248,11 @@ int main(){
   G.dijkstraSingleSource(S-1);
 
   // print output
-  for(llint i = 0; i < N; i++){
+  for(llint j = 0; j < N; j++){
     // not reachable nodes
-    if(nodes[i].distance == LLONG_MAX)
-      nodes[i].distance = -1;
-    cout << i + 1 << " " << nodes[i].distance << endl;
+    if(nodes[j].distance == LLONG_MAX)
+      nodes[j].distance = -1;
+    cout << j + 1 << " " << nodes[j].distance << endl;
   }
   return 0;
 }
