@@ -48,7 +48,7 @@ class MinPriorityQueue{
     // perform exchange between two array indices
     void exchange(llint a, llint b){
       // modifying location
-      swap(location_[Q_[a]], location_[Q_[b]]);
+      swap(location_[Q_[a]],location_[Q_[b]]);
 
       // swapping in heap
       swap(Q_[a], Q_[b]);
@@ -65,9 +65,9 @@ class MinPriorityQueue{
         llint left = leftNode(i);
         llint right = rightNode(i);
 
-        if (left <= end_ && nodes[Q_[left]].distance < nodes[Q_[minindex]].distance)
+        if (left <= end_ && nodes[Q_[left]].distance < nodes[Q_[i]].distance)
           minindex = left;
-        if (right <= end_ && nodes[Q_[right]].distance < nodes[Q_[minindex]].distance)
+        if (right <= end_ && nodes[Q_[right]].distance < nodes[Q_[i]].distance)
           minindex = right;
 
         if (minindex != i){
