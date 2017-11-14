@@ -27,24 +27,25 @@ class MinPriorityQueue{
     int size_;
 
   protected:
+    int * location_;
+
     void exchange(int a, int b){
+      location_[Q_[a]] = b;
+      location_[Q_[b]] = a;
+
       int tmp = Q_[a];
       Q_[a] = Q_[b];
       Q_[b] = tmp;
     }
 
     int searchID(int id){
-      int index;
-      for (index = 0; index <= end_; index ++){
-        if (Q_[index] == id)
-          break;
-      }
-      return index;
+      return location_[id];
     }
 
   public:
     MinPriorityQueue(int V){
       Q_ = new int [V];
+      location_ = new int [V];
       size_ = V;
       end_ = -1;
     }
@@ -72,6 +73,7 @@ class MinPriorityQueue{
         i = parent;
         parent = i/2;
       }
+      location_[id] = i;
     }
 
     void changeKey(int id, long long int key){
@@ -91,6 +93,7 @@ class MinPriorityQueue{
         i = parent;
         parent = i/2;
       }
+      location_[id] = i;
       // cout << "CHANGEKEY DONE, now top at: " << Q_[0] + 1 << endl;
 
     }
