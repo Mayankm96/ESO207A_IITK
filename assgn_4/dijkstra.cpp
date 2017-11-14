@@ -11,11 +11,11 @@ using namespace std;
 // structure Vertex for Dijkstra's Algorithm
 struct Vertex{
   llint distance;       // distance
-  llint parent;                   // predecessor
+  llint parent;         // predecessor
 };
 
 struct Edge{
-  llint destination;              // destination node's ID
+  llint destination;    // destination node's ID
   llint weight;         // edge weight
 };
 
@@ -43,6 +43,22 @@ class MinPriorityQueue{
 
     llint searchID(llint id){
       return location_[id];
+    }
+
+    void minHeapify(int i){
+        llint minindex = i;
+        llint left = 2*i;
+        llint right = 2*i + 1;
+
+        if (left <= end_ && nodes[Q_[left]].distance < nodes[Q_[i]].distance)
+          minindex = left;
+        if (right <= end_ && nodes[Q_[right]].distance < nodes[Q_[i]].distance)
+          minindex = right;
+
+        if (minindex != i){
+          exchange(i, minindex);
+          minHeapify(minindex);
+        }
     }
 
   public:
@@ -102,22 +118,6 @@ class MinPriorityQueue{
 
     }
 
-    void minHeapify(int i){
-        llint minindex = i;
-        llint left = 2*i;
-        llint right = 2*i + 1;
-
-        if (left <= end_ && nodes[Q_[left]].distance < nodes[Q_[i]].distance)
-          minindex = left;
-        if (right <= end_ && nodes[Q_[right]].distance < nodes[Q_[i]].distance)
-          minindex = right;
-
-        if (minindex != i){
-          exchange(i, minindex);
-          minHeapify(minindex);
-        }
-    }
-
     llint deleteMin(){
       llint min = Q_[0];
       Q_[0] = Q_[end_];
@@ -134,10 +134,6 @@ class MinPriorityQueue{
         return false;
       else
         return true;
-    }
-
-    llint top(){
-      return Q_[0];
     }
 };
 
