@@ -62,7 +62,7 @@ class MinPriorityQueue{
     }
 
     // performs the min heapify method
-    void minHeapify(int i){
+    void minHeapify(llint i){
         llint minindex = i;
         llint left = leftNode(i);
         llint right = rightNode(i);
@@ -98,7 +98,7 @@ class MinPriorityQueue{
     void insert(llint id){
       end_ = end_ + 1;
 
-      if (end_ > size_){
+      if (end_ >= size_){
         return;
       }
 
@@ -118,8 +118,6 @@ class MinPriorityQueue{
     // change the key for a node with id in the heap
     void changeKey(llint id, llint key){
       llint index = searchID(id);
-
-      nodes[Q_[index]].distance = key;
 
       //heapify
       llint i = index;
@@ -147,7 +145,7 @@ class MinPriorityQueue{
     }
 
     // check if a given node id is present in the heap or not
-    bool isInHeap(int id){
+    bool isInHeap(llint id){
       if(location_[id] == -1)
         return false;
       else
@@ -192,7 +190,7 @@ class Graph
         }
 
         // perfrom Dijkstra's Algorithm for shortest path searches
-        void dijkstraSingleSource(int source){
+        void dijkstraSingleSource(llint source){
           // singe source initialization
           initSingleSource(source);
 
@@ -211,7 +209,7 @@ class Graph
                 if (DEBUG)
                   cout << "Considering: "<< u+1 << "->" << v+1 << endl;
                 // check for relax edge conditions
-                if (nodes[v].distance > nodes[u].distance + w && Q.isInHeap(v)){
+                if (nodes[v].distance > nodes[u].distance + w && Q.isInHeap(v) && nodes[u].distance!=LLONG_MAX){
                   if (DEBUG)
                     cout << "Your connection is changing: " << u+1 << " -> " << v+1 << endl;
                   nodes[v].distance = nodes[u].distance + w;
