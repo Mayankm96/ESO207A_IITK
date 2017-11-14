@@ -3,6 +3,7 @@
 #include <string>
 #include <bits/stdc++.h>
 
+#define DEBUG false
 using namespace std;
 
 // structure Vertex for Dijkstra's Algorithm
@@ -94,7 +95,8 @@ class MinPriorityQueue{
         parent = i/2;
       }
       location_[id] = i;
-      // cout << "CHANGEKEY DONE, now top at: " << Q_[0] + 1 << endl;
+      if (DEBUG)
+        cout << "CHANGEKEY DONE, now top at: " << Q_[0] + 1 << endl;
 
     }
 
@@ -119,8 +121,17 @@ class MinPriorityQueue{
       Q_[0] = Q_[end_];
       end_ = end_ - 1;
       minHeapify(0);
-      // cout << "DELETION DONE, now top at: " << Q_[0] + 1 << endl;
+      location_[min] = -1;
+      if (DEBUG)
+        cout << "DELETION DONE, now top at: " << Q_[0] + 1 << endl;
       return min;
+    }
+
+    bool isInHeap(int id){
+      if(location_[id] == -1)
+        return false;
+      else
+        return true;
     }
 
     int top(){
@@ -151,7 +162,8 @@ class Graph
         Graph(int V){
             V_ = V;
             AdjList_ = new std::vector<Edge> [V];
-            // cout << "Graph initiated successfully!" << endl;
+            if (DEBUG)
+              cout << "Graph initiated successfully!" << endl;
         }
 
         // Adding Edge to Graph
@@ -161,7 +173,8 @@ class Graph
               e.destination = dest;
               e.weight = w;
               AdjList_[src].push_back(e);
-              // cout << "added edge from " << src + 1 << "->" << dest + 1 << " with weight: " << w << endl;
+              if (DEBUG)
+                cout << "added edge from " << src + 1 << "->" << dest + 1 << " with weight: " << w << endl;
             }
         }
 
@@ -187,9 +200,11 @@ class Graph
             for (i = AdjList_[u].begin(); i != AdjList_[u].end(); ++i){
                 int v = i-> destination;
                 long long int w = i-> weight;
-                // cout << "Considering: "<< u+1 << "->" << v+1 << endl;
-                if (nodes[v].distance > nodes[u].distance + w){
-                  // cout << "Your connection is changing: " << u+1 << " -> " << v+1 << endl;
+                if (DEBUG)
+                  cout << "Considering: "<< u+1 << "->" << v+1 << endl;
+                if (nodes[v].distance > nodes[u].distance + w && Q.isInHeap(v)){
+                  if (DEBUG)
+                    cout << "Your connection is changing: " << u+1 << " -> " << v+1 << endl;
                   nodes[v].distance = nodes[u].distance + w;
                   nodes[v].parent = u;
                   Q.changeKey(v, nodes[u].distance + w);
