@@ -65,9 +65,9 @@ class MinPriorityQueue{
         llint left = leftNode(i);
         llint right = rightNode(i);
 
-        if (left <= end_ && nodes[Q_[left]].distance < nodes[Q_[i]].distance)
+        if (left <= end_ && nodes[Q_[left]].distance < nodes[Q_[minindex]].distance)
           minindex = left;
-        if (right <= end_ && nodes[Q_[right]].distance < nodes[Q_[i]].distance)
+        if (right <= end_ && nodes[Q_[right]].distance < nodes[Q_[minindex]].distance)
           minindex = right;
 
         if (minindex != i){
@@ -95,10 +95,6 @@ class MinPriorityQueue{
     // insert a new element into the heap
     void insert(llint id){
       end_ = end_ + 1;
-
-      if (end_ >= size_){
-        return;
-      }
 
       Q_[end_] = id;
       location_[id] = end_;
