@@ -89,19 +89,6 @@ class MinPriorityQueue{
       else
         return 0;
     }
-    // a special function to make queue for Dijkstra's Algorithm
-    void makeDijQueue(llint V){
-      Q_.resize(V);
-      llint i;
-      for (i = 0; i< V; i++){
-				Q_[i] = i;
-				location_[i] = i;
-			}
-
-			for (i = (V/2)-1; i >= 0; i--){
-				minHeapify(i);
-			}
-    }
 
     // insert a new element into the heap
     void insert(llint id){
@@ -204,10 +191,9 @@ class Graph {
           // initialize min priority queue
           MinPriorityQueue Q(V_);
 
-          Q.makeDijQueue(V_);
-          // for(llint i = 0; i < V_; i++){
-          //   Q.insert(i);
-          // }
+          for(llint i = 0; i < V_; i++){
+            Q.insert(i);
+          }
 
           while (! Q.isEmpty()){
             llint u = Q.deleteMin();
@@ -251,7 +237,7 @@ int main(){
     deg = (i*C[1] + i*i*D[1]) % Degree;
     for (j = 1; j <= deg; j++){
       des = (i*C[0] + j*D[0]) % N;
-      w = (i*W[0] + j*W[1] ) % W[3];
+      w = (i*W[0] + j*W[1] ) % W[2];
       G.addEdge(src, des, w);
     }
   }
