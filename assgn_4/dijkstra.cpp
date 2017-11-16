@@ -26,8 +26,7 @@ Vertex * nodes;
 
 class MinPriorityQueue{
   private:
-    llint * Q_;   // queue
-    llint end_;   // last element present in the queue
+    std::vector<llint>  Q_;   // queue
     llint size_;  // initialized size of queue
 
   protected:
@@ -48,10 +47,10 @@ class MinPriorityQueue{
     // perform exchange between two array indices
     void exchange(llint a, llint b){
       // modifying location
-      swap(location_[Q_[a]],location_[Q_[b]]);
+      swap(location_[Q_.at(a)],location_[Q_.at(b)]);
 
       // swapping in heap
-      swap(Q_[a], Q_[b]);
+      swap(Q_.at(a), Q_.at(b));
     }
 
     // returns the index of a node id in the queue
@@ -65,9 +64,9 @@ class MinPriorityQueue{
         llint left = leftNode(i);
         llint right = rightNode(i);
 
-        if (left <= end_ && nodes[Q_[left]].distance < nodes[Q_[minindex]].distance)
+        if (left < Q_.size() && nodes[Q_.at(left)].distance < nodes[Q_.at(minindex)].distance)
           minindex = left;
-        if (right <= end_ && nodes[Q_[right]].distance < nodes[Q_[minindex]].distance)
+        if (right < Q_.size() && nodes[Q_.at(right)].distance < nodes[Q_.at(minindex)].distance)
           minindex = right;
 
         if (minindex != i){
@@ -78,15 +77,14 @@ class MinPriorityQueue{
 
   public:
     MinPriorityQueue(llint V){
-      Q_ = new llint [V];
+      // Q_.resize(V);
       location_ = new llint [V];
       size_ = V;
-      end_ = -1;
     }
 
     // checks if heap is empty or not
     bool isEmpty(){
-      if(end_ == -1)
+      if(Q_.size()==0)
         return 1;
       else
         return 0;
@@ -94,18 +92,18 @@ class MinPriorityQueue{
 
     // insert a new element into the heap
     void insert(llint id){
-      end_ = end_ + 1;
+      if (Q_.size() < size_){
+        Q_.push_back(id);
+        location_[id] = Q_.size()-1;
 
-      Q_[end_] = id;
-      location_[id] = end_;
-
-      //heapify
-      llint i = end_;
-      llint parent = parentNode(i);
-      while (i > 0 && (nodes[Q_[parent]].distance > nodes[Q_[i]].distance)){
-        exchange(parent, i);
-        i = parent;
-        parent = parentNode(i);
+        //heapify
+        llint i = Q_.size()-1;
+        llint parent = parentNode(i);
+        while (i > 0 && (nodes[Q_.at(parent)].distance > nodes[Q_.at(i)].distance)){
+          exchange(parent, i);
+          i = parent;
+          parent = parentNode(i);
+        }
       }
     }
 
@@ -116,25 +114,29 @@ class MinPriorityQueue{
       //heapify
       llint i = index;
       llint parent = parentNode(i);
-      while (i > 0 && (nodes[Q_[parent]].distance > nodes[Q_[i]].distance)){
+      while (i > 0 && (nodes[Q_.at(parent)].distance > nodes[Q_.at(i)].distance)){
         exchange(parent, i);
         i = parent;
         parent = parentNode(i);
       }
       if (DEBUG)
-        cout << "CHANGEKEY DONE, now top at: " << Q_[0] + 1 << endl;
+        cout << "CHANGEKEY DONE, now top at: " << Q_.at(0) + 1 << endl;
 
     }
 
     // delete the smallest element present in the queue
     llint deleteMin(){
       llint min = Q_[0];
-      Q_[0] = Q_[end_];
-      end_ = end_ - 1;
-      minHeapify(0);
+      // excahnge topmost element in queue with the last one
+      exchange(0, Q_.size()-1);
+      // delete vertex from the queue
+      Q_.pop_back();
       location_[min] = -1;
+      // reorder the heap
+      minHeapify(0);
+
       if (DEBUG)
-        cout << "DELETION DONE, now top at: " << Q_[0] + 1 << endl;
+        cout << "DELETION DONE, now top at: " << Q_.at(0) + 1 << endl;
       return min;
     }
 
@@ -201,7 +203,7 @@ class Graph {
                 if (DEBUG)
                   cout << "Considering: "<< u+1 << "->" << v+1 << endl;
                 // check for relax edge conditions
-                if (nodes[v].distance > nodes[u].distance + w && Q.isInHeap(v) && nodes[u].distance!=LLONG_MAX){
+                if ( Q.isInHeap(v) && nodes[u].distance!=LLONG_MAX && (nodes[v].distance > (nodes[u].distance + w))){
                   if (DEBUG)
                     cout << "Your connection is changing: " << u+1 << " -> " << v+1 << endl;
                   nodes[v].distance = nodes[u].distance + w;
