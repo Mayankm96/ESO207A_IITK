@@ -27,7 +27,7 @@ Vertex * nodes;
 class MinPriorityQueue{
   private:
     std::vector<llint>  Q_;   // queue
-    llint size_;  // initialized size of queue
+    llint size_;              // initialized size of queue
 
   protected:
     llint * location_;  // location of a node id in queue
@@ -77,7 +77,6 @@ class MinPriorityQueue{
 
   public:
     MinPriorityQueue(llint V){
-      // Q_.resize(V);
       location_ = new llint [V];
       size_ = V;
     }
@@ -151,8 +150,8 @@ class MinPriorityQueue{
 
 class Graph {
     private:
-        llint V_;
-        std::vector<Edge> * AdjList_;
+        llint V_;                      // number of vertices in graph
+        std::vector<Edge> * AdjList_;  // to store the adjacency list of graph vertices
 
     protected:
       // perform the initialization of source for Dijkstra's algorithm
@@ -195,6 +194,7 @@ class Graph {
             Q.insert(i);
           }
 
+          // greedy paradigm for shortest path in graph
           while (! Q.isEmpty()){
             llint u = Q.deleteMin();
             vector<Edge>::iterator i;
@@ -230,7 +230,7 @@ int main(){
   Graph G(N);
   nodes = new Vertex [N];
 
-  // add edges to the graph
+  // add edges to the graph using input constants
   llint i, deg, des, j, w;
   for(llint src = 0; src < N; src++){
     i = src + 1;
